@@ -14,3 +14,11 @@ export interface IGetUser {
     nome: string,
     email: string
 }
+
+export interface ITransactionAdd {
+    valor: number,
+    tipo: string,
+    descricao: string,
+    data: string,
+    categoria_id: number
+}

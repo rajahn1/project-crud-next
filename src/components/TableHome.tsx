@@ -1,11 +1,13 @@
+import { UserServices } from '@/app/services/UserServices';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import ModalEditRegister from './ModalEditRegister';
 import DeleteModal from './ModalDeleteRegister';
+import ModalEditRegister from './ModalEditRegister';
+import { useLocalStorage } from 'react-use';
 
 function createData(
     data: string,
@@ -29,7 +31,25 @@ const tableHeadStyle = {
   fontWeight: '700',
   backgroundColor: '#FAFAFA'
 }
+
 export default function TableHome() {
+  const [token, ,] = useLocalStorage('token');
+
+  const handleGetTransactions = async () => {
+    try {
+      const { data }  = await UserServices.getTransaction();
+      
+      if (!token) {
+        return alert('você não está autorizado!')
+      }
+      console.log(data);
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  handleGetTransactions();
   return (
     <TableContainer className=' max-w-3xl flex flex-col gap-4'>
       <Table size='small'>

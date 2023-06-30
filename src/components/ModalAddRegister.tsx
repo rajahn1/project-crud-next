@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { UserServices } from '@/app/services/UserServices';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -39,23 +40,63 @@ const titleStyle = {
 
 export default function ModalAddRegister() {
   const [open, setOpen] = React.useState(false);
+  const [selectSaida, setSelectSaida] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [form, setForm] = React.useState({
     valor: '',
-    categoria: '',
     data: '',
-    descricao: ''
+    descricao: '',
+    categoria_id: 1,
+    tipo: ''
   })
+  const [exitColor, setExitColor] = React.useState('');
+  const [entryColor, setEntryColor] = React.useState('');
+
+  React.useEffect(() => {
+    setForm({...form, tipo: selectSaida ? 'entrada' : 'saida'})
+
+    console.log(form.tipo);
+    if (selectSaida) {
+      setEntryColor('#B9B9B9');
+      setExitColor('#FF576B');
+    } else {
+      setEntryColor('#3A9FF1'),
+      setExitColor('#B9B9B9')
+    }
+  }, [selectSaida])
+
+
+
   function handleOnChange(e) {
     const { name, value } = e.target;
 
     setForm({...form, [name]: value});
   }
   
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!form.valor || !form.categoria_id || !form.data || !form.descricao){
+      return alert('preencha todos os campos!');
+    }
+
+    try {
+      console.log(form);
+      const { data } = await UserServices.addTransaction(form);
+      console.log(data);
+    } catch (error) {
+      console.log(error)
+    }
   };
+
+  const entryButton = {
+    backgroundColor: entryColor
+  }
+
+  const exitButton = {
+    backgroundColor: exitColor
+  }
 
   return (
     <div className='w-full'>
@@ -73,8 +114,8 @@ export default function ModalAddRegister() {
                     <img onClick={handleClose} className='cursor-pointer w-4' src="/Icon-Exit.svg" alt="icon-exist" />
                 </div>
                 <div className='w-full flex justify-center'>
-                    <button className='text-[#FAFAFA] rounded-sm h-8 text-xs bg-[#3A9FF1] w-1/2'>Entrada</button>
-                    <button className='text-[#FAFAFA] rounded-sm h-8 text-xs bg-[#B9B9B9] w-1/2'>Saída</button>
+                    <button style={entryButton} type='button' onClick={() => setSelectSaida(false)} className='text-[#FAFAFA] rounded-sm h-8 text-xs w-1/2'>Entrada</button>
+                    <button style={exitButton} type='button' onClick={() => setSelectSaida(true)} className='text-[#FAFAFA] rounded-sm h-8 text-xs w-1/2'>Saída</button>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <div className='flex flex-col'>
@@ -84,15 +125,15 @@ export default function ModalAddRegister() {
                         onChange={handleOnChange}
                         name='valor'
                         value={form.valor}
-                        type="text" className='p-2 border border-slate-500 h-10' />
+                        type="number" className='p-2 border border-slate-500 h-10' />
                     </div>
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Categoria</span>    
                         <input
                         
-                         onChange={handleOnChange}
+                        //  onChange={handleOnChange}
                          name='categoria'
-                         value={form.categoria}
+                        //  value={form.categoria}
                          type="text" className='p-2 border border-slate-500 h-10' />
                     </div>
                     <div className='flex flex-col'>
