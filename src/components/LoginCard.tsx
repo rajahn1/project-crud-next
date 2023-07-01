@@ -35,7 +35,6 @@ export default function LoginCard(){
             setToken(data.token);
             setUser({nome: data.usuario.nome, id: data.usuario.id});
             router.push('/home');
-            console.log(data);
         } catch (error) {
             console.log(error)
         }

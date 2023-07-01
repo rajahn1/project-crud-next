@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { UserServices } from '@/app/services/UserServices';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -22,14 +23,21 @@ const style = {
   gap: 1
 };
 
-function handleDelete() {
-    console.log('ok');
-}
 
-export default function DeleteModal() {
+
+export default function DeleteModal({ transactionId }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
+  async function handleDelete() {
+    try {
+      const { data } = await UserServices.deleteTransaction(transactionId)
+      setOpen(false);
+    } catch (error) {
+      console.log(error)
+    }
+}
 
   return (
     <div>

@@ -54,9 +54,7 @@ export default function ModalAddRegister() {
   const [entryColor, setEntryColor] = React.useState('');
 
   React.useEffect(() => {
-    setForm({...form, tipo: selectSaida ? 'entrada' : 'saida'})
-
-    console.log(form.tipo);
+    setForm({...form, tipo: selectSaida ? 'saida' : 'entrada'})
     if (selectSaida) {
       setEntryColor('#B9B9B9');
       setExitColor('#FF576B');
@@ -82,7 +80,6 @@ export default function ModalAddRegister() {
     }
 
     try {
-      console.log(form);
       const { data } = await UserServices.addTransaction(form);
       console.log(data);
     } catch (error) {

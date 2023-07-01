@@ -7,7 +7,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import DeleteModal from './ModalDeleteRegister';
 import ModalEditRegister from './ModalEditRegister';
+import { useEffect, useState } from 'react';
 import { useLocalStorage } from 'react-use';
+import { format } from 'date-fns';
 
 function createData(
     data: string,
@@ -34,22 +36,27 @@ const tableHeadStyle = {
 
 export default function TableHome() {
   const [token, ,] = useLocalStorage('token');
+  const [transactions, setTransactions] = useState();
 
   const handleGetTransactions = async () => {
     try {
       const { data }  = await UserServices.getTransaction();
-      
+      setTransactions(data);
+      // console.log(transactions);
+
       if (!token) {
         return alert('você não está autorizado!')
       }
-      console.log(data);
-      
+      // console.log(transactions);   
     } catch (error) {
       console.log(error)
     }
   }
 
-  handleGetTransactions();
+  useEffect(() => {
+    handleGetTransactions();
+  }, [transactions]);
+
   return (
     <TableContainer className=' max-w-3xl flex flex-col gap-4'>
       <Table size='small'>
@@ -65,23 +72,26 @@ export default function TableHome() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {transactions && transactions.map((row, index) => (
             <TableRow hover
               key={index}
               sx={{borderTop: 0}}
             >
               <TableCell align='center' component="th" scope="row">
-                {row.data}
+                {format(new Date(row.data), 'yyyy/MM/dd')}
               </TableCell>
-              <TableCell align="center">{row.dia_da_semana}</TableCell>
+              <TableCell align="center">{format(new Date(row.data), "eeee")}</TableCell>
               <TableCell align="center">{row.descricao}</TableCell>
-              <TableCell align="center">{row.categoria}</TableCell>
-              <TableCell align="center">{row.valor}</TableCell>
+              <TableCell align="center">{row.categoria_nome}</TableCell>
+              <TableCell align="center">R${row.valor.toFixed(2)}</TableCell>
               <TableCell className='w-2' align="center">
-                    <ModalEditRegister />
+                    <ModalEditRegister
+                    transactionId={row.id}
+                    />
               </TableCell>
                 <TableCell className='w-2'>
-                    <DeleteModal/>
+                    <DeleteModal
+                    transactionId={row.id}/>
                 </TableCell>
               {/* <TableCell align="right"><CreateIcon/></TableCell>
               <TableCell align="right"><DeleteIcon/></TableCell> */}
