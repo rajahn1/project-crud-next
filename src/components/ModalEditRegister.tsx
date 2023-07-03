@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import CreateIcon from '@mui/icons-material/Create';
 import { UserServices } from '@/app/services/UserServices';
 import format from 'date-fns/format';
+import { GlobalContext } from '@/context/GlobalContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -44,17 +45,26 @@ export default function ModalEditRegister({ transactionId }) {
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
   const [form, setForm] = React.useState({
+    descricao: '',
     valor: '',
-    categoria: '',
     data: '',
-    descricao: ''
-  })
+    categoria_id: '',
+    tipo: ''
+  });
+
+  const [select, setSelect] = React.useState({id: '', nome: ''});
+
+  const { categorias, setCategorias } = React.useContext(GlobalContext)
 
   async function handleOpen() {
     setOpen(true);
     try {
-      const { data } = await UserServices.getTransactionId(transactionId)
-      setForm({...form, valor: data.valor, categoria: data.categoria_nome, data: data.data, descricao: format(new Date(data.descricao), 'yyyy-MM-dd') })
+      const { data } = await UserServices.getTransactionId(transactionId);
+      const localOptions = [...categorias];
+      const myOption = localOptions.find((item) => item.id === data.categoria_id);
+      setSelect({id: myOption.id, nome: myOption.descricao});
+
+      setForm({...form, valor: Number(data.valor), categoria_id: data.categoria_id, data: data.data, descricao:data.descricao, tipo: data.tipo})
       console.log(data);
     } catch (error) {
       console.log(error)
@@ -66,9 +76,24 @@ export default function ModalEditRegister({ transactionId }) {
 
     setForm({...form, [name]: value});
   }
+
+  function handleChangeSelect(e) {
+    const localOptions = [...categorias];
+
+    const myOption = localOptions.find((item) => item.id === parseInt(e.target.value));
+    setSelect({id: myOption.id, nome: myOption.descricao});
+    setForm({...form, categoria_id: myOption.id});
+  }
   
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
+    console.log(form)
     e.preventDefault();
+    try {
+      const { data } = await UserServices.editTransaction(form, transactionId);
+      handleClose();
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <div>
@@ -101,12 +126,14 @@ export default function ModalEditRegister({ transactionId }) {
                     </div>
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Categoria</span>    
-                        <input
-                        
-                         onChange={handleOnChange}
-                         name='categoria'
-                         value={form.categoria}
-                         type="text" className='p-2 border border-slate-500 h-10' />
+                        <select 
+                        value={select.id}
+                        onChange={(e) => handleChangeSelect(e)}
+                        className='p-2 border border-slate-500 h-10'>
+                          {categorias && categorias.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.descricao}</option>
+                          ))}
+                        </select>
                     </div>
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Data</span>    

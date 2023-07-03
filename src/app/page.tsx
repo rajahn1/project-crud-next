@@ -4,6 +4,7 @@ import LoginCard from "@/components/LoginCard";
 import { useRouter } from "next/navigation";
 export default function Login(){
   const router = useRouter();
+  
     return(
       <div className="bg-[url('/background.png')] flex items-center justify-center gap-2 bg-center bg-no-repeat bg-cover w-screen h-screen text-xl">
         <div>

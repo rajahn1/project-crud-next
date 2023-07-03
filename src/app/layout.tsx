@@ -1,5 +1,6 @@
 import './globals.css'
-import { Rubik } from 'next/font/google'
+import { Rubik } from 'next/font/google';
+import GlobalProvider from '@/context/GlobalContext';
 
 const fonts = Rubik({ subsets: ['latin'] })
 
@@ -15,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={fonts.className}>{children}</body>
+      <body className={fonts.className}>
+        <GlobalProvider>
+          {children}
+        </GlobalProvider>
+        </body>
     </html>
   )
 }

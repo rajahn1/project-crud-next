@@ -57,6 +57,13 @@ export default function TableHome() {
     handleGetTransactions();
   }, [transactions]);
 
+  const exitColor = {
+    color: '#FA8C10'
+  }
+
+  const entryColor = {
+    color: '#645FFB'
+  }
   return (
     <TableContainer className=' max-w-3xl flex flex-col gap-4'>
       <Table size='small'>
@@ -83,7 +90,7 @@ export default function TableHome() {
               <TableCell align="center">{format(new Date(row.data), "eeee")}</TableCell>
               <TableCell align="center">{row.descricao}</TableCell>
               <TableCell align="center">{row.categoria_nome}</TableCell>
-              <TableCell align="center">R${row.valor.toFixed(2)}</TableCell>
+              <TableCell sx={row.tipo === 'entrada' ? entryColor : exitColor} align="center">R${row.valor.toFixed(2)}</TableCell>
               <TableCell className='w-2' align="center">
                     <ModalEditRegister
                     transactionId={row.id}

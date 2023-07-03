@@ -1,15 +1,17 @@
-// 'use client';
-// import { useContext, createContext, ReactNode } from "react";
+'use client';
+import { useContext, createContext, ReactNode, useState } from "react";
 
-// const GlobalContext = createContext();
+export const GlobalContext = createContext();
 
-// export default function GlobalProvider({ children }: { children: ReactNode }) {
+export default function GlobalProvider({ children }: { children: ReactNode }) {
 
-  
-//     const values = { }; 
-//     return (
-//       <GlobalContext.Provider value={values}>
-//         {children}
-//       </GlobalContext.Provider>
-//     );
-//   }
+    const [categorias, setCategorias] = useState();
+
+
+    const values = { categorias, setCategorias }; 
+    return (
+      <GlobalContext.Provider value={values}>
+        {children}
+      </GlobalContext.Provider>
+    );
+  }

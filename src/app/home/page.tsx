@@ -39,7 +39,7 @@ export default function About() {
 
     return(
         <div className="w-screen h-screen">
-            <header className="flex items-center justify-between w-full px-12 h-1/6 bg-gradient-header">
+            <header className="flex items-center justify-between w-full px-12 md:h-1/6 h-32 bg-gradient-header">
                 <img src="/logo-dindin.png" alt="logo-dindin" className="ml-12 w-32" />
                 <div className="flex items-center gap-2">
                     <img src="/account-user-icon.png" alt="avatar" />
@@ -47,12 +47,12 @@ export default function About() {
                     <img onClick={() => handleLogout()} src="/logout-arrow.png" alt="loggout" className="cursor-pointer" />
                 </div>
             </header>
-            <Stack className="px-12 py-4" direction="row" spacing={2}>
+            {/* <Stack className="px-12 py-4" direction="row" spacing={2}>
                     <Button sx={buttonStyle} variant="outlined" startIcon={<FilterAltIcon />}>
                         Filtrar
                     </Button>
-                </Stack>
-            <div className="px-12 py-2 flex justify-center gap-8 rounded-t-2xl">
+                </Stack> */}
+            <div className="mt-8 px-12 py-2 flex flex-col items-center md:flex-row md:items-start justify-center gap-8 rounded-t-2xl">
                 <TableHome/>
                 <div className="flex flex-col gap-4 justify-center">
                     <ResumeCard/>

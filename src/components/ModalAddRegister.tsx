@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { UserServices } from '@/app/services/UserServices';
+import { GlobalContext } from '@/context/GlobalContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -39,6 +40,7 @@ const titleStyle = {
 
 
 export default function ModalAddRegister() {
+  const [mounted, setMounted] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectSaida, setSelectSaida] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -47,13 +49,17 @@ export default function ModalAddRegister() {
     valor: '',
     data: '',
     descricao: '',
-    categoria_id: 1,
+    categoria_id: '',
     tipo: ''
   })
   const [exitColor, setExitColor] = React.useState('');
   const [entryColor, setEntryColor] = React.useState('');
 
+  const [select, setSelect] = React.useState({id: '', nome: ''});
+  const { categorias, setCategorias } = React.useContext(GlobalContext);
+  
   React.useEffect(() => {
+    setMounted(true);
     setForm({...form, tipo: selectSaida ? 'saida' : 'entrada'})
     if (selectSaida) {
       setEntryColor('#B9B9B9');
@@ -62,14 +68,38 @@ export default function ModalAddRegister() {
       setEntryColor('#3A9FF1'),
       setExitColor('#B9B9B9')
     }
-  }, [selectSaida])
 
+    getCategorias();
+  }, [selectSaida]);
 
+  if (!mounted) {
+    return null;
+  }
+
+  async function getCategorias() {
+    try {
+      const { data } = await UserServices.getCategoria();
+      setCategorias(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // React.useEffect(() => {
+    
+  // }, [])
 
   function handleOnChange(e) {
     const { name, value } = e.target;
 
     setForm({...form, [name]: value});
+  };
+
+  function handleChangeSelect(e) {
+    const localOptions = [...categorias];
+
+    const myOption = localOptions.find((item) => item.id === parseInt(e.target.value));
+    setSelect({id: myOption.id, nome: myOption.descricao});
+    setForm({...form, categoria_id: myOption.id});
   }
   
   async function handleSubmit(e) {
@@ -81,7 +111,7 @@ export default function ModalAddRegister() {
 
     try {
       const { data } = await UserServices.addTransaction(form);
-      console.log(data);
+      handleClose();
     } catch (error) {
       console.log(error)
     }
@@ -126,12 +156,14 @@ export default function ModalAddRegister() {
                     </div>
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Categoria</span>    
-                        <input
-                        
-                        //  onChange={handleOnChange}
-                         name='categoria'
-                        //  value={form.categoria}
-                         type="text" className='p-2 border border-slate-500 h-10' />
+                        <select 
+                        value={select.id}
+                        onChange={(e) => handleChangeSelect(e)}
+                        className='p-2 border border-slate-500 h-10'>
+                          {categorias && categorias.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.descricao}</option>
+                          ))}
+                        </select>
                     </div>
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Data</span>    

@@ -23,6 +23,7 @@ export const UserServices = {
     getTransactionId,
     editTransaction,
     deleteTransaction,
-    getExtract
+    getExtract,
+    getCategoria
 }
 
