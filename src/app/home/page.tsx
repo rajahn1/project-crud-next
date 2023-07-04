@@ -29,6 +29,7 @@ export default function About() {
     }, [mounted]);
 
     if (!mounted) return null;
+    if (!token) return null;
     
     function handleLogout() {
         removeToken();
