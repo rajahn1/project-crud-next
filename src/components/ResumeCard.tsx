@@ -1,25 +1,33 @@
+import { IExtract } from '@/app/interfaces/IUsersServices';
+import { UserServices } from '@/app/services/UserServices';
+import { GlobalContext } from '@/context/GlobalContext';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Button } from '@mui/material';
-import { UserServices } from '@/app/services/UserServices';
-import { useEffect, useState, useContext } from 'react';
-import { GlobalContext } from '@/context/GlobalContext';
+import { useContext, useEffect, useState } from 'react';
 
 export default function ResumeCard() {
-  const [extract, setExtract] = useState();
-  const { config } = useContext(GlobalContext)
+  const [extract, setExtract] = useState<IExtract>();
+  const context = useContext(GlobalContext);
+
+  if (!context) {
+    alert('error');
+    return null;
+  };
+
+  const { config } = context;
   
   async function handleGetExtract() {
     try {
       const { data } = await UserServices.getExtract(config);
       setExtract(data);
-    } catch (error) {
+    } catch (error:any) {
       alert(error.response.data.mensagem);
     }
-  } 
-    useEffect(() => {
-      handleGetExtract();
-    }, [extract])
+  }; 
+
+  useEffect(() => {
+    handleGetExtract();
+  }, [extract]);
 
   return (
     <Card sx={{ minWidth: 240, backgroundColor: '#FAFAFA', width: 16, color: '#2F2F2F', pt: 2, px: 2}}>

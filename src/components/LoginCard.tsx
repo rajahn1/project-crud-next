@@ -1,9 +1,9 @@
 'use client'
 import { IUserLogin } from "@/app/interfaces/IUsersServices";
 import { UserServices } from "@/app/services/UserServices";
-import { useState, useEffect } from "react"
-import { useLocalStorage } from "react-use";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useLocalStorage } from "react-use";
 
 export default function LoginCard(){
     const router = useRouter();
@@ -35,7 +35,7 @@ export default function LoginCard(){
             setToken(data.token);
             setUser({nome: data.usuario.nome, id: data.usuario.id});
             router.push('/home');
-        } catch (error) {
+        } catch (error:any) {
             alert(error.response.data.mensagem)
         }
     }

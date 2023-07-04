@@ -17,7 +17,7 @@ const buttonStyle = {
 
 export default function About() {
     const [token, setToken, removeToken] = useLocalStorage('token');
-    const [user, setUser, removeUser] = useLocalStorage('user');
+    const [user, setUser, removeUser] = useLocalStorage<any>('user');
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
 
@@ -43,7 +43,7 @@ export default function About() {
                 <img src="/logo-dindin.png" alt="logo-dindin" className="ml-12 w-32" />
                 <div className="flex items-center gap-2">
                     <img src="/account-user-icon.png" alt="avatar" />
-                    {/* <span className="text-white font-bold mr-2"> { user && user.nome}</span> */}
+                    <span className="text-white font-bold mr-2"> { user && user.nome}</span>
                     <img onClick={() => handleLogout()} src="/logout-arrow.png" alt="loggout" className="cursor-pointer" />
                 </div>
             </header>

@@ -1,4 +1,4 @@
-function addZero(i:number) {
+function addZero(i:any) {
     if (i < 10) {i = "0" + i}
     return i;
   }

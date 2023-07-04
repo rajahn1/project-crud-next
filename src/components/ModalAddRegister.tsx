@@ -1,11 +1,10 @@
 import { UserServices } from '@/app/services/UserServices';
 import { GlobalContext } from '@/context/GlobalContext';
+import { actualHour } from '@/utils/FunctionHour';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import * as React from 'react';
-import format from 'date-fns/format';
-import { actualHour } from '@/utils/FunctionHour';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -62,13 +61,20 @@ export default function ModalAddRegister() {
   const [entryColor, setEntryColor] = React.useState('');
 
   const [select, setSelect] = React.useState({id: 0, nome: ''});
-  const { categorias, setCategorias, config } = React.useContext(GlobalContext);
+
+  const context = React.useContext(GlobalContext);
+
+  if (!context) {
+    alert('error');
+    return null;
+  }
+  const { categorias, setCategorias, config } = context;
   
   async function getCategorias() {
     try {
       const { data } = await UserServices.getCategoria(config);
       setCategorias(data);
-    } catch (error) {
+    } catch (error:any) {
       alert(error.response.data.mensagem);
     }
   }
@@ -91,13 +97,13 @@ export default function ModalAddRegister() {
     return null;
   }
 
-  function handleOnChange(e) {
+  function handleOnChange(e:any) {
     const { name, value } = e.target;
     
     setForm({...form, [name]: value});
   };
 
-  function handleChangeSelect(e) {
+  function handleChangeSelect(e:any) {
     const localOptions = [...categorias];
 
     const myOption = localOptions.find((item) => item.id === parseInt(e.target.value));
@@ -110,7 +116,7 @@ export default function ModalAddRegister() {
     setForm({...form, categoria_id: myOption.id});
   }
   
-  async function handleSubmit(e) {
+  async function handleSubmit(e:any) {
     e.preventDefault();
 
     if (!form.valor || !form.categoria_id || !form.data || !form.descricao){
@@ -125,7 +131,7 @@ export default function ModalAddRegister() {
       setForm({...form, data: `${form.data} ${actualHour}`});
       const { data } = await UserServices.addTransaction(form, config);
       handleClose();
-    } catch (error) {
+    } catch (error:any) {
       alert(error.response.data.mensagem);
     }
   };

@@ -1,16 +1,17 @@
+import { ITransactionsRes } from '@/app/interfaces/IUsersServices';
 import { UserServices } from '@/app/services/UserServices';
+import { GlobalContext } from '@/context/GlobalContext';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { format } from 'date-fns';
+import { useContext, useEffect, useState } from 'react';
+import { useLocalStorage } from 'react-use';
 import DeleteModal from './ModalDeleteRegister';
 import ModalEditRegister from './ModalEditRegister';
-import { useEffect, useState, useContext } from 'react';
-import { useLocalStorage } from 'react-use';
-import { format } from 'date-fns';
-import { GlobalContext } from '@/context/GlobalContext';
 
 const tableHeadStyle = {
   color: '#000',
@@ -23,8 +24,14 @@ const tableHeadStyle = {
 
 export default function TableHome() {
   const [token, ,] = useLocalStorage('token');
-  const [transactions, setTransactions] = useState();
-  const { config } = useContext(GlobalContext)
+  const [transactions, setTransactions] = useState<ITransactionsRes[]>();
+  const context = useContext(GlobalContext);
+
+  if (!context){
+    alert('error');
+    return null;
+  }
+  const { config } = context;
 
   const handleGetTransactions = async () => {
     try {
@@ -33,7 +40,7 @@ export default function TableHome() {
       if (!token) {
         return alert('você não está autorizado!')
       }
-    } catch (error) {
+    } catch (error:any) {
       alert(error.response.data.mensagem);
     }
   }

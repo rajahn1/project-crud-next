@@ -1,11 +1,11 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { IModalEditProp } from '@/app/interfaces/IUsersServices';
 import { UserServices } from '@/app/services/UserServices';
 import { GlobalContext } from '@/context/GlobalContext';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import * as React from 'react';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -24,21 +24,27 @@ const style = {
   gap: 1
 };
 
-export default function DeleteModal({ transactionId }) {
+export default function DeleteModal({ transactionId }:IModalEditProp) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { config } = React.useContext(GlobalContext)
+
+  const context = React.useContext(GlobalContext);
+
+  if (!context) {
+    alert('error');
+    return null;
+  }
+  const { config } = context;
   
   async function handleDelete() {
     try {
       const { data } = await UserServices.deleteTransaction(transactionId, config)
       setOpen(false);
-    } catch (error) {
+    } catch (error:any) {
       alert(error.response.data.mensagem);
     }
 }
-
   return (
     <div>
       <DeleteIcon className='cursor-pointer hover:scale-110' onClick={handleOpen} />
