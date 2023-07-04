@@ -2,12 +2,12 @@
 
 import { IUserRegister } from "@/app/interfaces/IUsersServices";
 import { UserServices } from "@/app/services/UserServices";
-import { useState } from "react"
+import { useState } from "react";
 
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import Stack from '@mui/material/Stack';
+import * as React from 'react';
 
 import { useRouter } from "next/navigation";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
