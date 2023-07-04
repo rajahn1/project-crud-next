@@ -22,3 +22,11 @@ export interface ITransactionAdd {
     data: string,
     categoria_id: number
 }
+
+export interface IEditTransaction {
+    descricao: string
+    valor: number
+    data: string
+    categoria_id: number
+    tipo: string
+}

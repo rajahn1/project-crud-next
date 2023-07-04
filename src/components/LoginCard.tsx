@@ -36,14 +36,14 @@ export default function LoginCard(){
             setUser({nome: data.usuario.nome, id: data.usuario.id});
             router.push('/home');
         } catch (error) {
-            console.log(error)
+            alert(error.response.data.mensagem)
         }
     }
 
     return(
     <form
     onSubmit={handleLogin} 
-    className="bg-white flex flex-col px-8 py-10 gap-6 items-center h-96 w-4/12 shadow-sm">
+    className="bg-white flex flex-col px-8 py-10 gap-6 items-center justify-center 2xl:h-1/2 2xl:w-3/12 h-96 w-4/12 shadow-sm">
         <h2 className="text-violet-500 text-2xl font-semibold"> Login</h2>
         <div className="w-full flex flex-col gap-4 text-base text-gray-700 ">
             <div className="flex flex-col">

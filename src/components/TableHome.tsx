@@ -7,23 +7,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import DeleteModal from './ModalDeleteRegister';
 import ModalEditRegister from './ModalEditRegister';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useLocalStorage } from 'react-use';
 import { format } from 'date-fns';
-
-function createData(
-    data: string,
-    dia_da_semana: string,
-    descricao: string,
-    categoria: string,
-    valor: number
-) {
-  return { data, dia_da_semana, descricao, categoria, valor };
-}
-
-const rows = [
-  createData('02/09/2022', 'quarta', 'açai', 'pix', 25)
-];
+import { GlobalContext } from '@/context/GlobalContext';
 
 const tableHeadStyle = {
   color: '#000',
@@ -37,19 +24,17 @@ const tableHeadStyle = {
 export default function TableHome() {
   const [token, ,] = useLocalStorage('token');
   const [transactions, setTransactions] = useState();
+  const { config } = useContext(GlobalContext)
 
   const handleGetTransactions = async () => {
     try {
-      const { data }  = await UserServices.getTransaction();
+      const { data }  = await UserServices.getTransaction(config);
       setTransactions(data);
-      // console.log(transactions);
-
       if (!token) {
         return alert('você não está autorizado!')
       }
-      // console.log(transactions);   
     } catch (error) {
-      console.log(error)
+      alert(error.response.data.mensagem);
     }
   }
 
@@ -79,13 +64,14 @@ export default function TableHome() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {transactions && transactions.map((row, index) => (
+          {transactions && transactions.map((row, key) => (
             <TableRow hover
-              key={index}
+              key={key}
               sx={{borderTop: 0}}
             >
               <TableCell align='center' component="th" scope="row">
-                {format(new Date(row.data), 'yyyy/MM/dd')}
+                {row.data.slice(0,10)}
+                {/* {format(new Date(row.data), 'dd/MM/yyyy HH:mm:ss')} */}
               </TableCell>
               <TableCell align="center">{format(new Date(row.data), "eeee")}</TableCell>
               <TableCell align="center">{row.descricao}</TableCell>
@@ -100,9 +86,6 @@ export default function TableHome() {
                     <DeleteModal
                     transactionId={row.id}/>
                 </TableCell>
-              {/* <TableCell align="right"><CreateIcon/></TableCell>
-              <TableCell align="right"><DeleteIcon/></TableCell> */}
-
             </TableRow>
           ))}
         </TableBody>

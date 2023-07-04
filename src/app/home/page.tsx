@@ -1,17 +1,13 @@
 'use client'
 
-import useLocalStorage from "react-use/lib/useLocalStorage";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import useLocalStorage from "react-use/lib/useLocalStorage";
 
 import TableHome from "@/components/TableHome";
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-import ResumeCard from "@/components/ResumeCard";
 import ModalAddRegister from "@/components/ModalAddRegister";
+import ResumeCard from "@/components/ResumeCard";
 
 const buttonStyle = {
     borderRadius: '1rem',
@@ -23,20 +19,23 @@ export default function About() {
     const [token, setToken, removeToken] = useLocalStorage('token');
     const [user, setUser, removeUser] = useLocalStorage('user');
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
 
+    useEffect(() => {
+        setMounted(true);
+        if (!token) {
+            router.push('/');
+        }
+    }, [mounted]);
+
+    if (!mounted) return null;
     
     function handleLogout() {
         removeToken();
         removeUser();
         router.push('/');
     }
-
-    useEffect(() => {
-        if (!user){
-            router.push('/');
-        }
-    }, [])
-
+    
     return(
         <div className="w-screen h-screen">
             <header className="flex items-center justify-between w-full px-12 md:h-1/6 h-32 bg-gradient-header">

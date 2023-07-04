@@ -1,10 +1,11 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import { UserServices } from '@/app/services/UserServices';
 import { GlobalContext } from '@/context/GlobalContext';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import * as React from 'react';
+import format from 'date-fns/format';
+import { actualHour } from '@/utils/FunctionHour';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -44,20 +45,34 @@ export default function ModalAddRegister() {
   const [open, setOpen] = React.useState(false);
   const [selectSaida, setSelectSaida] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setForm({...form, valor: 0, data: '', descricao: '', categoria_id: 0});
+    setSelect({...select, id: 0});
+  }
+
   const [form, setForm] = React.useState({
-    valor: '',
+    valor: 0,
     data: '',
     descricao: '',
-    categoria_id: '',
+    categoria_id: 0,
     tipo: ''
   })
   const [exitColor, setExitColor] = React.useState('');
   const [entryColor, setEntryColor] = React.useState('');
 
-  const [select, setSelect] = React.useState({id: '', nome: ''});
-  const { categorias, setCategorias } = React.useContext(GlobalContext);
+  const [select, setSelect] = React.useState({id: 0, nome: ''});
+  const { categorias, setCategorias, config } = React.useContext(GlobalContext);
   
+  async function getCategorias() {
+    try {
+      const { data } = await UserServices.getCategoria(config);
+      setCategorias(data);
+    } catch (error) {
+      alert(error.response.data.mensagem);
+    }
+  }
+
   React.useEffect(() => {
     setMounted(true);
     setForm({...form, tipo: selectSaida ? 'saida' : 'entrada'})
@@ -76,21 +91,9 @@ export default function ModalAddRegister() {
     return null;
   }
 
-  async function getCategorias() {
-    try {
-      const { data } = await UserServices.getCategoria();
-      setCategorias(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  // React.useEffect(() => {
-    
-  // }, [])
-
   function handleOnChange(e) {
     const { name, value } = e.target;
-
+    
     setForm({...form, [name]: value});
   };
 
@@ -98,6 +101,11 @@ export default function ModalAddRegister() {
     const localOptions = [...categorias];
 
     const myOption = localOptions.find((item) => item.id === parseInt(e.target.value));
+
+    if (!myOption) {
+      return
+    }
+
     setSelect({id: myOption.id, nome: myOption.descricao});
     setForm({...form, categoria_id: myOption.id});
   }
@@ -109,11 +117,16 @@ export default function ModalAddRegister() {
       return alert('preencha todos os campos!');
     }
 
+    if (form.data.length !== 10) {
+      return alert('por favor insira a data no formato "31/11/2021" ')
+    }
+
     try {
-      const { data } = await UserServices.addTransaction(form);
+      setForm({...form, data: `${form.data} ${actualHour}`});
+      const { data } = await UserServices.addTransaction(form, config);
       handleClose();
     } catch (error) {
-      console.log(error)
+      alert(error.response.data.mensagem);
     }
   };
 
@@ -148,7 +161,6 @@ export default function ModalAddRegister() {
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Valor</span>    
                         <input
-                        
                         onChange={handleOnChange}
                         name='valor'
                         value={form.valor}
@@ -160,6 +172,7 @@ export default function ModalAddRegister() {
                         value={select.id}
                         onChange={(e) => handleChangeSelect(e)}
                         className='p-2 border border-slate-500 h-10'>
+                          <option value={0}> Selecione uma categoria </option>
                           {categorias && categorias.map((cat) => (
                             <option key={cat.id} value={cat.id}>{cat.descricao}</option>
                           ))}
@@ -168,7 +181,6 @@ export default function ModalAddRegister() {
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Data</span>    
                         <input
-                         
                          onChange={handleOnChange}
                          name='data'
                          value={form.data}
@@ -177,7 +189,6 @@ export default function ModalAddRegister() {
                     <div className='flex flex-col'>
                         <span className='text-l' style={spanInputStyle}> Descrição</span>    
                         <input
-                        
                          onChange={handleOnChange}
                          name='descricao'
                          value={form.descricao} 

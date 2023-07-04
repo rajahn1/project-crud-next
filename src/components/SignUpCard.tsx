@@ -57,7 +57,7 @@ export default function SignUpCard() {
             setOpen(true);
             handleClearForm();
         } catch (error:any) {
-            console.log(error.response.data.mensagem)
+            alert(error.response.data.mensagem);
         }
     };
 

@@ -1,12 +1,11 @@
-import * as React from 'react';
+import { UserServices } from '@/app/services/UserServices';
+import { GlobalContext } from '@/context/GlobalContext';
+import { actualHour } from '@/utils/FunctionHour';
+import CreateIcon from '@mui/icons-material/Create';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import CreateIcon from '@mui/icons-material/Create';
-import { UserServices } from '@/app/services/UserServices';
-import format from 'date-fns/format';
-import { GlobalContext } from '@/context/GlobalContext';
+import * as React from 'react';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -40,61 +39,65 @@ const titleStyle = {
     fontWeight:' 700',
 };
 
-
 export default function ModalEditRegister({ transactionId }) {
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
   const [form, setForm] = React.useState({
     descricao: '',
-    valor: '',
+    valor: 0,
     data: '',
-    categoria_id: '',
+    categoria_id: 0,
     tipo: ''
   });
 
   const [select, setSelect] = React.useState({id: '', nome: ''});
 
-  const { categorias, setCategorias } = React.useContext(GlobalContext)
+  const { categorias, setCategorias, config } = React.useContext(GlobalContext)
 
   async function handleOpen() {
     setOpen(true);
     try {
-      const { data } = await UserServices.getTransactionId(transactionId);
+      const { data } = await UserServices.getTransactionId(transactionId, config);
       const localOptions = [...categorias];
       const myOption = localOptions.find((item) => item.id === data.categoria_id);
       setSelect({id: myOption.id, nome: myOption.descricao});
-
-      setForm({...form, valor: Number(data.valor), categoria_id: data.categoria_id, data: data.data, descricao:data.descricao, tipo: data.tipo})
-      console.log(data);
+      setForm({...form, valor: Number(data.valor), categoria_id: data.categoria_id, data: data.data.slice(0,10), descricao:data.descricao, tipo: data.tipo})
     } catch (error) {
-      console.log(error)
+      alert(error.response.data.mensagem);
     }
   }
 
   function handleOnChange(e) {
     const { name, value } = e.target;
-
     setForm({...form, [name]: value});
   }
 
   function handleChangeSelect(e) {
     const localOptions = [...categorias];
-
     const myOption = localOptions.find((item) => item.id === parseInt(e.target.value));
     setSelect({id: myOption.id, nome: myOption.descricao});
     setForm({...form, categoria_id: myOption.id});
   }
   
   async function handleSubmit(e) {
-    console.log(form)
     e.preventDefault();
+    if (!form.valor || !form.categoria_id || !form.data || !form.descricao){
+      return alert('preencha todos os campos!');
+    }
+
+    if (form.data.length !== 10) {
+      return alert('por favor insira a data no formato "31/11/2021" ')
+    }
+    
     try {
-      const { data } = await UserServices.editTransaction(form, transactionId);
+      setForm({...form, data: `${form.data} ${actualHour}`});
+      const { data } = await UserServices.editTransaction(form, transactionId, config);
       handleClose();
     } catch (error) {
-      console.log(error)
+      alert(error.response.data.mensagem);
     }
   };
+
   return (
     <div>
       <CreateIcon onClick={handleOpen} className='mr-2 cursor-pointer hover:scale-110'/>

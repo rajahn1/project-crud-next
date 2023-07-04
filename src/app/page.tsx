@@ -10,12 +10,12 @@ export default function Login(){
         <div>
           <Logo />
         </div>
-              <div className="w-1/2 h-5/6 flex flex-col gap-4 justify-center">
-                  <h2 className="w-5/6 text-bold text-white text-4xl"> Controle suas <a className="text-purple-800">finanças</a>, <br/> sem planilha chata. </h2>
-                  <span className="w-5/6 font-rubik font-medium text-white text-xl"> Organizar as suas finanças nunca foi tão fácil, com o DINDIN, você tem tudo num único lugar e em um clique de distância.</span>
-                  <button onClick={() => router.push('/signup')} className="bg-violet-500 text-white font-bold text-sm rounded-md w-3/6 h-12"> Cadastre-se</button>
-              </div>
-              <LoginCard />
-        </div>
+          <div className="w-1/2 h-5/6 flex flex-col gap-4 justify-center">
+              <h2 className="w-5/6 text-bold text-white text-4xl"> Controle suas <a className="text-purple-800">finanças</a>, <br/> sem planilha chata. </h2>
+              <span className="w-5/6 font-rubik font-medium text-white text-xl"> Organizar as suas finanças nunca foi tão fácil, com o DINDIN, você tem tudo num único lugar e em um clique de distância.</span>
+              <button onClick={() => router.push('/signup')} className="bg-violet-500 text-white font-bold text-sm rounded-md w-3/6 h-12"> Cadastre-se</button>
+          </div>
+          <LoginCard />
+      </div>
     )
 }

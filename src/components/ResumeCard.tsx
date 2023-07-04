@@ -2,22 +2,21 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Button } from '@mui/material';
 import { UserServices } from '@/app/services/UserServices';
-import { useEffect, useState } from 'react';
-
-
+import { useEffect, useState, useContext } from 'react';
+import { GlobalContext } from '@/context/GlobalContext';
 
 export default function ResumeCard() {
   const [extract, setExtract] = useState();
-
+  const { config } = useContext(GlobalContext)
+  
   async function handleGetExtract() {
     try {
-      const { data } = await UserServices.getExtract();
-      setExtract(data)
-
+      const { data } = await UserServices.getExtract(config);
+      setExtract(data);
     } catch (error) {
-      console.log(error);
+      alert(error.response.data.mensagem);
     }
-  }
+  } 
     useEffect(() => {
       handleGetExtract();
     }, [extract])
